@@ -4,7 +4,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import "./webGLtest";
+import LazyParent from "./components/lazyParent";
+import Parent from "./components/parent";
 
 class MyThing extends React.Component<{}> {
   render(): global.JSX.Element {
@@ -43,7 +44,9 @@ if (rootElement !== null) {
   ReactDOM.render(
     <div>
       <MyThing />
+      <LazyParent />
       <p>Testing Loader</p>
+      <Parent />
     </div>,
     rootElement
   );
