@@ -1,7 +1,17 @@
-import React from "react";
+import React, { Component } from "react";
 
-import style from "./lazy.css";
+import style from "./lazy.useable.css";
 
-export default function Lazy() {
-  return <div className={style.mylazybox}>Lazy Box</div>;
+export default class Lazy extends Component {
+  componentWillMount() {
+    style.use();
+  }
+
+  componentWillUnmount() {
+    style.unuse();
+  }
+
+  render() {
+    return <div className={style.locals.mylazybox}>Lazy Box</div>;
+  }
 }
