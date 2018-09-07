@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 
 import LazyParent from "./components/lazyParent";
 import Parent from "./components/parent";
+import MountingApp from "./mounting/mounting-app";
 
 import "./components/test.mystyle";
 
@@ -45,6 +46,7 @@ let rootElement = document.getElementById("root");
 if (rootElement !== null) {
   ReactDOM.render(
     <div>
+      <MountingApp />
       <MyThing />
       <LazyParent />
       <p>Testing Loader</p>

@@ -22,8 +22,8 @@ export default class LazyParent extends Component {
   render() {
     return (
       <div>
-        {this.state.lazyComponent}
         <button onClick={() => this.toggleLazyComponent()}>Show Lazy</button>
+        {this.state.lazyComponent}
       </div>
     );
   }
