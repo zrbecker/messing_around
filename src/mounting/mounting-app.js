@@ -21,7 +21,9 @@ export default class MountingApp extends Component {
         <div>
           <h3>Version 0</h3>
           <MountedChild />
-          <button onClick={this.switchVersion}>Switch</button>
+          <button className="btn btn-primary" onClick={this.switchVersion}>
+            Switch
+          </button>
         </div>
       );
     } else {
@@ -31,7 +33,9 @@ export default class MountingApp extends Component {
           <div>
             <MountedChild />
           </div>
-          <button onClick={this.switchVersion}>Switch</button>
+          <button className="btn btn-primary" onClick={this.switchVersion}>
+            Switch
+          </button>
         </div>
       );
     }

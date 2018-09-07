@@ -19,7 +19,7 @@ module.exports = {
       { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" },
       {
         test: /\.css$/,
-        exclude: [/node_modules/, /\.useable\.css/],
+        exclude: /\.useable\.css/,
         use: [
           "style-loader",
           {
@@ -32,7 +32,6 @@ module.exports = {
       },
       {
         test: /\.useable\.css$/,
-        exclude: /node_modules/,
         use: [
           "style-loader/useable",
           {
@@ -45,9 +44,18 @@ module.exports = {
       },
       {
         test: /\.mystyle$/,
+        use: ["style-loader", "raw-loader"]
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         use: [
-          "style-loader",
-          "raw-loader",
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+              outputPath: "fonts/"
+            }
+          }
         ]
       }
     ]

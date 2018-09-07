@@ -22,8 +22,12 @@ export default class MountedChild extends Component {
     return (
       <div>
         <div>{this.state.count}</div>
-        <button onClick={this.clicked}>Click</button>
-        <button onClick={this.clear}>Clear</button>
+        <button className="btn btn-primary" onClick={this.clicked}>
+          Click
+        </button>
+        <button className="btn btn-primary" onClick={this.clear}>
+          Clear
+        </button>
       </div>
     );
   }

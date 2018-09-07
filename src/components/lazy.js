@@ -12,6 +12,8 @@ export default class Lazy extends Component {
   }
 
   render() {
-    return <div className={style.locals.mylazybox}>Lazy Box</div>;
+    return (
+      <div className={style.locals.mylazybox}>Lazy Box</div>
+    );
   }
 }

@@ -9,6 +9,8 @@ import Parent from "./components/parent";
 import MountingApp from "./mounting/mounting-app";
 
 import "./components/test.mystyle";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/css/bootstrap-theme.css";
 
 class MyThing extends React.Component<{}> {
   render(): global.JSX.Element {
@@ -45,12 +47,21 @@ console.log("Answer:", answer);
 let rootElement = document.getElementById("root");
 if (rootElement !== null) {
   ReactDOM.render(
-    <div>
-      <MountingApp />
-      <MyThing />
-      <LazyParent />
-      <p>Testing Loader</p>
-      <Parent />
+    <div className="text-center">
+      <div className="jumbotron">
+        <h1>Messing Around</h1>
+      </div>
+      <div className="container">
+        <MountingApp />
+        <hr />
+        <MyThing />
+        <hr />
+        <LazyParent />
+        <hr />
+        <p>Testing Loader</p>
+        <hr />
+        <Parent />
+      </div>
     </div>,
     rootElement
   );
