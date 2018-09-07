@@ -65,5 +65,9 @@ module.exports = {
       template: "public/index.html"
     })
   ],
-  devtool: "source-map"
+  devtool: "source-map",
+  devServer: {
+    contentBase: path.resolve(__dirname, "build"),
+    port: 9000
+  }
 };

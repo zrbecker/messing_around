@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 type StockType = {
   symbol: string,
@@ -8,21 +9,16 @@ type StockType = {
 };
 
 type PropsType = {
-  stock: StockType,
-  onClick: string => void
+  stock: StockType
 };
 
 export default class StockRef extends Component<PropsType> {
-  render(): global.JSX.Element {
+  render() {
+    const { symbol } = this.props.stock;
     return (
       <div>
         <h3>
-          <button
-            onClick={(): void => this.props.onClick(this.props.stock)}
-            className="btn btn-link"
-          >
-            {this.props.stock.symbol}
-          </button>
+          <Link to={`/stock/${symbol}`}>{symbol}</Link>
           <p>
             <small>{this.props.stock.name}</small>
           </p>
