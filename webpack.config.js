@@ -42,6 +42,13 @@ module.exports = {
             }
           }
         ]
+      },
+      {
+        test: /\.mystyle$/,
+        use: [
+          "style-loader",
+          "raw-loader",
+        ]
       }
     ]
   },

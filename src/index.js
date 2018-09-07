@@ -7,6 +7,8 @@ import ReactDOM from "react-dom";
 import LazyParent from "./components/lazyParent";
 import Parent from "./components/parent";
 
+import "./components/test.mystyle";
+
 class MyThing extends React.Component<{}> {
   render(): global.JSX.Element {
     return <p>Hello World!</p>;
