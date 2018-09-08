@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import stockAPI from "./stockApi";
 import StockRef from "./stock-ref";
+import _ from "lodash";
 
 import localCache from "./local-cache";
 
 const LIMIT = 20;
+const UPDATE_MATCH_DELAY = 500;
 
 export default class StockList extends Component {
   constructor(props) {
@@ -15,12 +17,21 @@ export default class StockList extends Component {
       sector: "",
       isLoading: true,
       error: false,
-      offset: 0
+      offset: 0,
+      matches: []
     };
     this.onSearchTermChange = this.onSearchTermChange.bind(this);
     this.onSectorChange = this.onSectorChange.bind(this);
     this.onClickPrevious = this.onClickPrevious.bind(this);
     this.onClickNext = this.onClickNext.bind(this);
+    this.computeMatches = _.throttle(
+      this.computeMatches.bind(this),
+      UPDATE_MATCH_DELAY,
+      {
+        leading: false,
+        trailing: true
+      }
+    );
   }
 
   componentDidMount() {
@@ -29,13 +40,15 @@ export default class StockList extends Component {
 
   onSearchTermChange(e) {
     this.setState({ searchTerm: e.target.value, offset: 0 });
+    this.computeMatches();
   }
 
   onSectorChange(e) {
     this.setState({ sector: e.target.value, offset: 0 });
+    this.computeMatches();
   }
 
-  getMatches() {
+  computeMatches() {
     const matches = [];
     const searchTerm = this.state.searchTerm.toLowerCase();
     if (this.state.stocks) {
@@ -47,7 +60,7 @@ export default class StockList extends Component {
         }
       }
     }
-    return matches;
+    this.setState({ matches });
   }
 
   loadStocks() {
@@ -56,11 +69,17 @@ export default class StockList extends Component {
         const LOCAL_STOCKS_KEY = "StockList.state.stocks";
         const localStocks = localCache.get(LOCAL_STOCKS_KEY);
         if (localStocks) {
-          this.setState({ isLoading: false, stocks: localStocks });
+          this.setState(
+            { isLoading: false, stocks: localStocks },
+            this.computeMatches
+          );
         } else {
           const stocks = await stockAPI.getSupportedSymbols();
           localCache.set(LOCAL_STOCKS_KEY, stocks, 3600 * 1000);
-          this.setState({ isLoading: false, stocks: stocks });
+          this.setState(
+            { isLoading: false, stocks: stocks },
+            this.computeMatches
+          );
         }
       } catch (error) {
         this.setState({ isLoading: false, error: true });
@@ -85,7 +104,7 @@ export default class StockList extends Component {
       return <div>Error Loading Data...</div>;
     }
 
-    const matches = this.getMatches();
+    const matches = this.state.matches;
     const hasPrevious = this.state.offset > 0;
     const hasNext = this.state.offset + LIMIT < matches.length;
     const page = Math.floor(this.state.offset / LIMIT) + 1;
