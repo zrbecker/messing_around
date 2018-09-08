@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import stockAPI from "./stockApi";
 import StockRef from "./stock-ref";
 
+import localCache from "./local-cache";
+
 const LIMIT = 20;
 
 export default class StockList extends Component {
@@ -10,11 +12,13 @@ export default class StockList extends Component {
     this.state = {
       stocks: null,
       searchTerm: "",
+      sector: "",
       isLoading: true,
       error: false,
       offset: 0
     };
     this.onSearchTermChange = this.onSearchTermChange.bind(this);
+    this.onSectorChange = this.onSectorChange.bind(this);
     this.onClickPrevious = this.onClickPrevious.bind(this);
     this.onClickNext = this.onClickNext.bind(this);
   }
@@ -25,6 +29,10 @@ export default class StockList extends Component {
 
   onSearchTermChange(e) {
     this.setState({ searchTerm: e.target.value, offset: 0 });
+  }
+
+  onSectorChange(e) {
+    this.setState({ sector: e.target.value, offset: 0 });
   }
 
   getMatches() {
@@ -45,8 +53,15 @@ export default class StockList extends Component {
   loadStocks() {
     this.setState({ isLoading: true, error: false }, async () => {
       try {
-        const stocks = await stockAPI.getSupportedSymbols();
-        this.setState({ isLoading: false, stocks: stocks });
+        const LOCAL_STOCKS_KEY = "StockList.state.stocks";
+        const localStocks = localCache.get(LOCAL_STOCKS_KEY);
+        if (localStocks) {
+          this.setState({ isLoading: false, stocks: localStocks });
+        } else {
+          const stocks = await stockAPI.getSupportedSymbols();
+          localCache.set(LOCAL_STOCKS_KEY, stocks, 3600 * 1000);
+          this.setState({ isLoading: false, stocks: stocks });
+        }
       } catch (error) {
         this.setState({ isLoading: false, error: true });
       }
@@ -82,12 +97,17 @@ export default class StockList extends Component {
       <div>
         <h1>Stock List</h1>
         <h2>Search Stock Symbols</h2>
-        <input
-          type="text"
-          className="form-control"
-          value={this.state.searchTerm}
-          onChange={this.onSearchTermChange}
-        />
+        <form>
+          <div className="form-group">
+            <label>Symbol/Name</label>
+            <input
+              type="text"
+              className="form-control"
+              value={this.state.searchTerm}
+              onChange={this.onSearchTermChange}
+            />
+          </div>
+        </form>
         <hr />
         Page {page} of {numPages}.
         <button

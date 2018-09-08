@@ -21,6 +21,7 @@ export default class StockRef extends Component<PropsType, StateType> {
   constructor(props) {
     super(props);
     this.state = {
+      description: null,
       price: null
     };
   }
@@ -28,14 +29,18 @@ export default class StockRef extends Component<PropsType, StateType> {
   async componentDidMount() {
     try {
       const quote = await stockAPI.getQuote(this.props.stock.symbol);
-      this.setState({ price: quote.latestPrice });
+      const company = await stockAPI.getCompany(this.props.stock.symbol);
+      this.setState({
+        price: quote.latestPrice,
+        description: company.description
+      });
     } catch (error) {
       /* Do nothing */
     }
   }
 
   async componentWillUnmount() {
-    this.setState = () => {}
+    this.setState = () => {};
   }
 
   render() {
@@ -54,6 +59,7 @@ export default class StockRef extends Component<PropsType, StateType> {
             </small>
           </p>
         </h3>
+        <p>{this.state.description}</p>
       </div>
     );
   }
