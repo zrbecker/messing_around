@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import StockAPI from "./stockApi";
+import stockAPI from "./stockApi";
 import StockRef from "./stock-ref";
 
-const stockAPI = new StockAPI();
+const LIMIT = 20;
 
 export default class StockList extends Component {
   constructor(props) {
@@ -11,9 +11,12 @@ export default class StockList extends Component {
       stocks: null,
       searchTerm: "",
       isLoading: true,
-      error: false
+      error: false,
+      offset: 0
     };
     this.onSearchTermChange = this.onSearchTermChange.bind(this);
+    this.onClickPrevious = this.onClickPrevious.bind(this);
+    this.onClickNext = this.onClickNext.bind(this);
   }
 
   componentDidMount() {
@@ -21,7 +24,7 @@ export default class StockList extends Component {
   }
 
   onSearchTermChange(e) {
-    this.setState({ searchTerm: e.target.value });
+    this.setState({ searchTerm: e.target.value, offset: 0 });
   }
 
   getMatches() {
@@ -33,9 +36,6 @@ export default class StockList extends Component {
         const name = stock.name.toLowerCase();
         if (symbol.includes(searchTerm) || name.includes(searchTerm)) {
           matches.push(stock);
-        }
-        if (matches.length > 20) {
-          break;
         }
       }
     }
@@ -53,6 +53,14 @@ export default class StockList extends Component {
     });
   }
 
+  onClickNext() {
+    this.setState(({ offset }) => ({ offset: offset + LIMIT }));
+  }
+
+  onClickPrevious() {
+    this.setState(({ offset }) => ({ offset: Math.max(0, offset - LIMIT) }));
+  }
+
   render() {
     if (this.state.isLoading) {
       return <div>Loading...</div>;
@@ -63,10 +71,16 @@ export default class StockList extends Component {
     }
 
     const matches = this.getMatches();
+    const hasPrevious = this.state.offset > 0;
+    const hasNext = this.state.offset + LIMIT < matches.length;
+    const page = Math.floor(this.state.offset / LIMIT) + 1;
+    const numPages = Math.ceil(matches.length / LIMIT);
+
+    const start = this.state.offset;
+    const end = this.state.offset + LIMIT;
     return (
       <div>
         <h1>Stock List</h1>
-
         <h2>Search Stock Symbols</h2>
         <input
           type="text"
@@ -74,14 +88,24 @@ export default class StockList extends Component {
           value={this.state.searchTerm}
           onChange={this.onSearchTermChange}
         />
-
         <hr />
-
-        {matches.map(stock => (
-          <StockRef
-            key={stock.symbol}
-            stock={stock}
-          />
+        Page {page} of {numPages}.
+        <button
+          className="btn btn-link"
+          onClick={this.onClickPrevious}
+          disabled={!hasPrevious}
+        >
+          Previous
+        </button>
+        <button
+          className="btn btn-link"
+          onClick={this.onClickNext}
+          disabled={!hasNext}
+        >
+          Next
+        </button>
+        {matches.slice(start, end).map(stock => (
+          <StockRef key={stock.symbol} stock={stock} />
         ))}
       </div>
     );
