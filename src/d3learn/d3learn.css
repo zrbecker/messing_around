@@ -1,0 +1,13 @@
+:local(.chart div) {
+  background-color: lightblue;
+  color: white;
+  margin: 0.2em 0 0;
+  padding: 0.2em;
+}
+
+:local(.chart div:first-child) {
+  background-color: lightblue;
+  color: white;
+  margin: 0;
+  padding: 0.2em;
+}
