@@ -14,33 +14,46 @@ type PropsType = {
 };
 
 type StateType = {
-  price: number | null
+  price: number | null,
+  description: string | null
 };
 
 export default class StockRef extends Component<PropsType, StateType> {
-  constructor(props) {
+  // TODO: This is considered an anti pattern. Consider cancelable promise.
+  _isMounted: boolean;
+  
+  constructor(props: PropsType) {
     super(props);
     this.state = {
       description: null,
       price: null
     };
+    this._isMounted = true;
   }
 
-  async componentDidMount() {
+  async getData() {
     try {
       const quote = await stockAPI.getQuote(this.props.stock.symbol);
+      await new Promise(res => setTimeout(() => res(), 1000));
       const company = await stockAPI.getCompany(this.props.stock.symbol);
-      this.setState({
-        price: quote.latestPrice,
-        description: company.description
-      });
+      if (this._isMounted) {
+        this.setState({
+          price: quote.latestPrice,
+          description: company.description
+        });
+      }
     } catch (error) {
       /* Do nothing */
     }
   }
 
-  async componentWillUnmount() {
-    this.setState = () => {};
+  componentDidMount() {
+    this._isMounted = true;
+    this.getData();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

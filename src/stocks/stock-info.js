@@ -22,8 +22,8 @@ type StateType = {
     symbol: string,
     tags: Array<string>,
     website: string
-  },
-  quoteData: {}
+  } | null,
+  quoteData: {} | null
 };
 
 export default class StockInfo extends Component<PropsType, StateType> {
